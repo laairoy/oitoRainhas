@@ -21,7 +21,7 @@ public class Main {
         
         control.printPopulacao();
         
-
+        control.setFitness();
         
         
     }

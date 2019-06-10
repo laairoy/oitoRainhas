@@ -53,4 +53,12 @@ public class Controle {
             System.out.println(populacao.getIndividuo(x).toString());
         }
     }
+
+    public void setFitness() {
+        Selecao selecao = new Selecao();
+        
+        for(int x= 0; x < populacao.tamanho(); x++){
+            selecao.setFitness(populacao.getIndividuo(x));
+        }
+    }
 }

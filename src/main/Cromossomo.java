@@ -39,6 +39,10 @@ public class Cromossomo {
         cromo[locus] = alelo;
     }
     
+    public int tamanho(){
+        return cromo.length;
+    }
+    
     @Override
     public String toString(){
         return Arrays.toString(cromo);
