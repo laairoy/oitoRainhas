@@ -10,13 +10,19 @@ package main;
  * @author laairoy
  */
 public class Main {
-    private int tamanhoPopulacao;
-    private double taxaMutacao;
-    private int criterioParada;
-    
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
+        int tamPopulacao = 10;
+        //int tamCromo = 8;
+        
+        Controle control = new Controle(tamPopulacao, 0, 0);
+        
+        control.initPopulacao();
+        
+        control.printPopulacao();
+        
+
         
         
     }
-    
 }
