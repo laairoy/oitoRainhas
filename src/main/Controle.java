@@ -54,11 +54,19 @@ public class Controle {
         }
     }
 
-    public void setFitness() {
-        Selecao selecao = new Selecao();
-        
-        for(int x= 0; x < populacao.tamanho(); x++){
-            selecao.setFitness(populacao.getIndividuo(x));
+    public void selecao() {
+
+        for (int i = 0; i < 4000; i++) {
+            Selecao selecao = new Selecao();
+            for (int x = 0; x < populacao.tamanho(); x++) {
+                int valor = selecao.setFitness(populacao.getIndividuo(x));
+                if (valor == 56) {
+                    System.out.println("achou");
+                    i = 100;
+                    return;
+                }
+            }
+            populacao = selecao.selecionaRoleta();
         }
     }
 }

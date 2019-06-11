@@ -12,7 +12,7 @@ package main;
 public class Main {
 
     public static void main(String[] args) {
-        int tamPopulacao = 10;
+        int tamPopulacao = 100;
         //int tamCromo = 8;
         
         Controle control = new Controle(tamPopulacao, 0, 0);
@@ -21,7 +21,9 @@ public class Main {
         
         control.printPopulacao();
         
-        control.setFitness();
+        control.selecao();
+        
+        //control.printPopulacao();
         
         
     }

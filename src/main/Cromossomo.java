@@ -39,6 +39,10 @@ public class Cromossomo {
         cromo[locus] = alelo;
     }
     
+    public int getGene(int locus){
+        return cromo[locus];
+    }
+    
     public int tamanho(){
         return cromo.length;
     }
@@ -47,4 +51,5 @@ public class Cromossomo {
     public String toString(){
         return Arrays.toString(cromo);
     }
+    
 }
