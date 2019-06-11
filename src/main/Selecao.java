@@ -25,15 +25,17 @@ public class Selecao {
     private final ArrayList<Cromossomo> cromossomos;
     private final Map<Cromossomo, Integer> cromo;
     private int tamPopulacao;
+    private double taxaMutacao;
 
     private int somaFitness;
 
-    public Selecao() {
+    public Selecao(int tamPopulacao, double taxaMutacao) {
         this.fitness = new ArrayList<>();
         this.cromossomos = new ArrayList<>();
         this.somaFitness = 0;
         this.cromo = new HashMap<>();
-        this.tamPopulacao = 10;
+        this.tamPopulacao = tamPopulacao;
+        this.taxaMutacao = taxaMutacao;
     }
 
     public int setFitness(Cromossomo cromo) {
@@ -119,7 +121,7 @@ public class Selecao {
     private Populacao cruzamentoUniforme(ArrayList<Cromossomo> cromo) {
         Populacao pop = new Populacao(tamPopulacao);
 
-        for (int x = 1; x < cromo.size(); x = x + 2) {
+        for (int x = 1; x < tamPopulacao; x = x + 2) {
             Cromossomo filho1 = new Cromossomo();
             Cromossomo filho2 = new Cromossomo();
             Cromossomo pai = cromo.get(x - 1);
@@ -136,20 +138,20 @@ public class Selecao {
                 }
 
             }
-            pop.addIndividuo(mutacao(0.05, filho1));
-            pop.addIndividuo(mutacao(0.05, filho2));
+            pop.addIndividuo(mutacao(filho1));
+            pop.addIndividuo(mutacao(filho2));
         }
 
         return pop;
 
     }
 
-    private Cromossomo mutacao(double taxa, Cromossomo cromo) {
+    private Cromossomo mutacao(Cromossomo cromo) {
 
         for (int x = 0; x < cromo.tamanho(); x++) {
             double muta = Math.random() * 1;
 
-            if (muta < taxa) {
+            if (muta < taxaMutacao) {
                 cromo.setGene(x, (int) (Math.random() * 8 + 1));
             }
         }

@@ -17,7 +17,7 @@ public class Cromossomo {
 
     public Cromossomo(Integer[] cromo) throws Exception {
         if (cromo.length != 8) {
-            System.out.println("Cromossomo inválido");
+            
             throw new IllegalArgumentException("Cromossomo com tamanho inválido!");
         }
         this.cromo = cromo;

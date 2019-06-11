@@ -57,7 +57,7 @@ public class Controle {
     public void selecao() {
 
         for (int i = 0; i < 4000; i++) {
-            Selecao selecao = new Selecao();
+            Selecao selecao = new Selecao(populacao.tamanho(), 0.05);
             for (int x = 0; x < populacao.tamanho(); x++) {
                 int valor = selecao.setFitness(populacao.getIndividuo(x));
                 if (valor == 56) {
