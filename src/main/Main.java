@@ -16,12 +16,10 @@ public class Main {
         //int tamCromo = 8;
         
         Controle control = new Controle(tamPopulacao, 0, 0);
+                
+        //control.printPopulacao();
         
-        control.initPopulacao();
-        
-        control.printPopulacao();
-        
-        control.selecao();
+        //control.selecao();
         
         //control.printPopulacao();
         

@@ -23,6 +23,17 @@ public class Controle {
         this.critPara = critPara;
         this.tamCromossomo = 8;
         populacao = new Populacao(tamPopulacao);
+
+        initPopulacao();
+    }
+    
+    public void iniciar(){
+        if(critPara == 0){
+            selecaoEncontrar();
+        }
+        else {
+            selecaoGeracao();
+        }
     }
 
     public int getTamPopulacao() {
@@ -37,7 +48,7 @@ public class Controle {
         return critPara;
     }
 
-    public void initPopulacao() {
+    private void initPopulacao() {
         for (int x = 0; x < tamPopulacao; x++) {
             Cromossomo cromo = new Cromossomo();
             for (int y = 0; y < tamCromossomo; y++) {
@@ -54,19 +65,32 @@ public class Controle {
         }
     }
 
-    public void selecao() {
-
-        for (int i = 0; i < 4000; i++) {
-            Selecao selecao = new Selecao(populacao.tamanho(), 0.05);
-            for (int x = 0; x < populacao.tamanho(); x++) {
-                int valor = selecao.setFitness(populacao.getIndividuo(x));
-                if (valor == 56) {
-                    System.out.println("achou");
-                    i = 100;
-                    return;
-                }
+    private boolean selecao() {
+        Selecao selecao = new Selecao(populacao.tamanho(), 0.05);
+        for (int x = 0; x < populacao.tamanho(); x++) {
+            int valor = selecao.setFitness(populacao.getIndividuo(x));
+            if (valor == 56) {
+                System.out.println("achou");
+                return true;
             }
-            populacao = selecao.selecionaRoleta();
+        }
+        populacao = selecao.selecionaRoleta();
+        return false;
+    }
+
+    private void selecaoEncontrar() {
+        boolean achou = false;
+        while (achou == false) {
+            achou = selecao();
         }
     }
+
+    private void selecaoGeracao() {
+        for (int i = 0; i < critPara; i++) {
+            if(selecao()) {
+                return;
+            }
+        }
+    }
+
 }
