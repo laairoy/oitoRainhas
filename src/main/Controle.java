@@ -111,12 +111,20 @@ public class Controle {
     }
 
     private void selecaoGeracao() {
-        System.out.println("oooooo" + critPara);
+
         for (int i = 0; i < critPara; i++) {
-            if (selecao(i)) {
+            boolean res = selecao(i);
+            if (res == true) {
                 System.out.println("fim!");
                 return;
             }
+        }
+        
+        try {
+            ArquivoSaida arq = ArquivoSaida.init();
+            arq.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("fim!");
     }

@@ -5,10 +5,12 @@
  */
 package main;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,12 +20,13 @@ import java.util.List;
 public class ArquivoSaida {
 
     private static ArquivoSaida arquivo;
-    private File file;
-    private BufferedWriter buff;
+    private String path;
+    private List<String> list;
 
     private ArquivoSaida(String caminho) throws IOException {
-        file = new File(caminho);
-        buff = new BufferedWriter(new FileWriter(file));
+        list = new LinkedList<>();
+        path = caminho;
+
     }
 
     public static ArquivoSaida init() throws IOException {
@@ -34,12 +37,15 @@ public class ArquivoSaida {
     }
 
     public void println(String str) throws IOException {
-        buff.write(str + "\n");
+        list.add(str);
     }
 
     public void close() throws IOException {
-        buff.close();
-        arquivo = null;
+        Charset utf8 = StandardCharsets.UTF_8;
+        try {
+            Files.write(Paths.get(path), list, utf8);
+        } catch (IOException e) {
+        }
 
     }
 
