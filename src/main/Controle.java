@@ -75,9 +75,8 @@ public class Controle {
     private boolean selecao(int geracao) {
         Selecao selecao = new Selecao(populacao.tamanho(), taxaMuta, geracao, metCruzamento);
         boolean resultado = selecao.setFitness(populacao);
-        selecao.printPopulacao();
-        //System.out.println();
 
+        //System.out.println();
         try {
             ArquivoSaida arq = ArquivoSaida.init();
             arq.println("");
@@ -89,6 +88,9 @@ public class Controle {
         } catch (IOException ex) {
             Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        selecao.printPopulacao();
+
         if (metSelecao == 0) {
             populacao = selecao.selecionaRoleta();
         } else {
@@ -109,6 +111,7 @@ public class Controle {
     }
 
     private void selecaoGeracao() {
+        System.out.println("oooooo" + critPara);
         for (int i = 0; i < critPara; i++) {
             if (selecao(i)) {
                 System.out.println("fim!");

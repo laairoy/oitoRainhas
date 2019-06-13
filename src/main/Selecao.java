@@ -45,6 +45,7 @@ public class Selecao {
 
     public boolean setFitness(Populacao populacao) {
         boolean bool = false;
+        String melhor = null;
         for (int x = 0; x < populacao.tamanho(); x++) {
             //int valor = selecao.setFitness(populacao.getIndividuo(x));
             Cromossomo cromossomo = populacao.getIndividuo(x);
@@ -58,10 +59,22 @@ public class Selecao {
 
             //System.out.println(cromo.toString() + " " + (49 - colisao));
             if ((56 - colisao) == 56) {
-                System.out.println("-> " + cromossomo.toString());
+                melhor = "Melhor: " + cromossomo.toString() + " Fitness: " + 56;
+                System.out.println(melhor);
+
                 bool = true;
             }
             //return 56 - colisao;
+        }
+        if (melhor != null) {
+            ArquivoSaida arq;
+            try {
+                arq = ArquivoSaida.init();
+                arq.println(melhor);
+            } catch (IOException ex) {
+                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
         return bool;
     }
@@ -114,10 +127,8 @@ public class Selecao {
             }
 
         }
-        if (metCruzamento == 0) {
-            return cruzamentoUniforme(parentes);
-        }
-        return cruzamentoUniforme(parentes);
+
+        return cruzamento(parentes);
     }
 
     private SortedMap<Integer, Integer> organizarPopulacao() {
@@ -138,52 +149,6 @@ public class Selecao {
             Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
         }
         return map;
-    }
-
-    private Populacao cruzamentoUniforme(ArrayList<Cromossomo> cromo) {
-        Populacao pop = new Populacao(tamPopulacao);
-
-        for (int x = 1; x < tamPopulacao; x = x + 2) {
-            Cromossomo filho1 = new Cromossomo();
-            Cromossomo filho2 = new Cromossomo();
-            Cromossomo pai = cromo.get(x - 1);
-            Cromossomo mae = cromo.get(x);
-
-            for (int i = 0; i < 8; i++) {
-                int rand = (int) (Math.random() * 10);
-                if (rand < 5) {
-                    filho1.setGene(i, pai.getAlelo(i));
-                    filho2.setGene(i, mae.getAlelo(i));
-                } else {
-                    filho1.setGene(i, mae.getAlelo(i));
-                    filho2.setGene(i, pai.getAlelo(i));
-                }
-
-            }
-            Cromossomo mut1 = mutacao(filho1);
-            Cromossomo mut2 = mutacao(filho2);
-
-            try {
-                ArquivoSaida arq = ArquivoSaida.init();
-                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
-                        + " => F1: " + filho1.toString() + ", M: " + mut1.toString());;
-                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
-                        + " => F2: " + filho2.toString() + ", M: " + mut2.toString());
-            } catch (IOException ex) {
-                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            /*System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
-                    + " => F1: " + filho1.toString() + ", M: " + mut1.toString());
-            System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
-                    + " => F2: " + filho2.toString() + ", M: " + mut2.toString());
-             */
-
-            pop.addIndividuo(mut1);
-            pop.addIndividuo(mut2);
-        }
-
-        return pop;
-
     }
 
     private Cromossomo mutacao(Cromossomo cromo) {
@@ -233,8 +198,7 @@ public class Selecao {
 
             for (int x = 1; x < tamTorneio; x++) {
                 Integer sorteio = (int) (Math.random() * fitness.size());
-                
-               
+
                 if (fitness.get(sorteio) > fitness.get(keyselected)) {
                     keyselected = sorteio;
                 }
@@ -251,9 +215,88 @@ public class Selecao {
 
         }
 
-        if (metCruzamento == 0) {
-            return cruzamentoUniforme(parentes);
+        return cruzamento(parentes);
+    }
+
+    private Populacao cruzamento(ArrayList<Cromossomo> cromo) {
+        Populacao pop = new Populacao(tamPopulacao);
+
+        for (int x = 1; x < tamPopulacao; x = x + 2) {
+
+            Cromossomo pai = cromo.get(x - 1);
+            Cromossomo mae = cromo.get(x);
+            ArrayList<Cromossomo> temp;
+
+            if (metCruzamento == 0) {
+                //System.out.println("Cruzamento Uniforme");
+                temp = cruzamentoUniforme(pai, mae);
+            } else {
+                //System.out.println("Cruzamento de um ponto");
+                temp = cruzamentoUmPonto(pai, mae);
+            }
+
+            Cromossomo mut1 = mutacao(temp.get(0));
+            Cromossomo mut2 = mutacao(temp.get(1));
+
+            try {
+                ArquivoSaida arq = ArquivoSaida.init();
+                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                        + " => F1: " + temp.get(0).toString() + ", M: " + mut1.toString());;
+                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                        + " => F2: " + temp.get(1).toString() + ", M: " + mut2.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            pop.addIndividuo(mut1);
+            pop.addIndividuo(mut2);
         }
-        return cruzamentoUniforme(parentes);
+
+        return pop;
+
+    }
+
+    private ArrayList<Cromossomo> cruzamentoUmPonto(Cromossomo pai, Cromossomo mae) {
+        ArrayList<Cromossomo> list = new ArrayList<>();
+        Cromossomo filho1 = new Cromossomo();
+        Cromossomo filho2 = new Cromossomo();
+
+        for (int i = 0; i < 8; i++) {
+            //int rand = (int) (Math.random() * 10);
+            if (i < 4) {
+                filho1.setGene(i, pai.getAlelo(i));
+                filho2.setGene(i, mae.getAlelo(i));
+            } else {
+                filho1.setGene(i, mae.getAlelo(i));
+                filho2.setGene(i, pai.getAlelo(i));
+            }
+
+        }
+        list.add(filho1);
+        list.add(filho2);
+        return list;
+
+    }
+
+    private ArrayList<Cromossomo> cruzamentoUniforme(Cromossomo pai, Cromossomo mae) {
+        ArrayList<Cromossomo> list = new ArrayList<>();
+        Cromossomo filho1 = new Cromossomo();
+        Cromossomo filho2 = new Cromossomo();
+
+        for (int i = 0; i < 8; i++) {
+            int rand = (int) (Math.random() * 10);
+            if (rand < 5) {
+                filho1.setGene(i, pai.getAlelo(i));
+                filho2.setGene(i, mae.getAlelo(i));
+            } else {
+                filho1.setGene(i, mae.getAlelo(i));
+                filho2.setGene(i, pai.getAlelo(i));
+            }
+
+        }
+        list.add(filho1);
+        list.add(filho2);
+        return list;
+
     }
 }

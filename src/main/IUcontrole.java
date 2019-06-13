@@ -57,9 +57,9 @@ public class IUcontrole extends javax.swing.JFrame {
 
         jLabel2.setText("N. Populacao");
 
-        spPopulacao.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        spPopulacao.setModel(new javax.swing.SpinnerNumberModel(2, 2, null, 2));
 
-        spGeracao.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 2));
+        spGeracao.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -102,7 +102,7 @@ public class IUcontrole extends javax.swing.JFrame {
 
         cbCriterioParada.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Encontrar", "Geracoes" }));
 
-        spTaxaMutacao.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+        spTaxaMutacao.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -135,7 +135,7 @@ public class IUcontrole extends javax.swing.JFrame {
         jPanel5.setToolTipText("");
         jPanel5.setName(""); // NOI18N
 
-        cbCruzamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unitario", "outro" }));
+        cbCruzamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uniforme", "Um ponto" }));
         cbCruzamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbCruzamentoActionPerformed(evt);
