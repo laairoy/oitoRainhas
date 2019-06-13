@@ -15,7 +15,7 @@ public class Main {
         int tamPopulacao = 100;
         //int tamCromo = 8;
         
-        Controle control = new Controle(tamPopulacao, 0, 0);
+        //Controle control = new Controle(tamPopulacao, 0, 0);
                 
         //control.printPopulacao();
         

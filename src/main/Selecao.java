@@ -5,6 +5,7 @@
  */
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +25,14 @@ public class Selecao {
     private final ArrayList<Integer> fitness;
     private final ArrayList<Cromossomo> cromossomos;
     private final Map<Cromossomo, Integer> cromo;
-    private int tamPopulacao;
-    private int taxaMutacao;
+    private final int tamPopulacao;
+    private final int taxaMutacao;
+    private final int metCruzamento;
     int geracao;
 
     private int somaFitness;
 
-    public Selecao(int tamPopulacao, int taxaMutacao, int geracao) {
+    public Selecao(int tamPopulacao, int taxaMutacao, int geracao, int metCruzamento) {
         this.fitness = new ArrayList<>();
         this.cromossomos = new ArrayList<>();
         this.somaFitness = 0;
@@ -38,6 +40,7 @@ public class Selecao {
         this.tamPopulacao = tamPopulacao;
         this.taxaMutacao = taxaMutacao;
         this.geracao = geracao;
+        this.metCruzamento = metCruzamento;
     }
 
     public boolean setFitness(Populacao populacao) {
@@ -86,22 +89,9 @@ public class Selecao {
     }
 
     public Populacao selecionaRoleta() {
-        Map<Integer, Integer> hmap = new HashMap<>();
         ArrayList<Cromossomo> parentes = new ArrayList<>();
+        SortedMap<Integer, Integer> map = organizarPopulacao();
 
-        for (int i = 0; i < fitness.size(); i++) {
-            hmap.put(i, fitness.get(i));
-        }
-
-        Comparar comp = new Comparar(hmap);
-        SortedMap<Integer, Integer> map = new TreeMap<Integer, Integer>(comp);
-
-        map.putAll(hmap);
-
-        System.out.println("Melhor: " + this.cromossomos.get(map.firstKey()).toString() + " " + map.values().iterator().next());
-        //System.out.println();
-
-        //int index =0;
         for (int i = 0; i < fitness.size(); i++) {
             Double randValor = Math.random() * 360;
             int keyselected = 0;
@@ -124,8 +114,30 @@ public class Selecao {
             }
 
         }
-
+        if (metCruzamento == 0) {
+            return cruzamentoUniforme(parentes);
+        }
         return cruzamentoUniforme(parentes);
+    }
+
+    private SortedMap<Integer, Integer> organizarPopulacao() {
+        Map<Integer, Integer> hmap = new HashMap<>();
+
+        for (int i = 0; i < fitness.size(); i++) {
+            hmap.put(i, fitness.get(i));
+        }
+
+        Comparar comp = new Comparar(hmap);
+        SortedMap<Integer, Integer> map = new TreeMap<Integer, Integer>(comp);
+
+        map.putAll(hmap);
+        try {
+            ArquivoSaida arq = ArquivoSaida.init();
+            arq.println("Melhor: " + this.cromossomos.get(map.firstKey()).toString() + " " + map.values().iterator().next());
+        } catch (IOException ex) {
+            Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return map;
     }
 
     private Populacao cruzamentoUniforme(ArrayList<Cromossomo> cromo) {
@@ -150,13 +162,22 @@ public class Selecao {
             }
             Cromossomo mut1 = mutacao(filho1);
             Cromossomo mut2 = mutacao(filho2);
-            
-            System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+
+            try {
+                ArquivoSaida arq = ArquivoSaida.init();
+                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                        + " => F1: " + filho1.toString() + ", M: " + mut1.toString());;
+                arq.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                        + " => F2: " + filho2.toString() + ", M: " + mut2.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            /*System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
                     + " => F1: " + filho1.toString() + ", M: " + mut1.toString());
             System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
                     + " => F2: " + filho2.toString() + ", M: " + mut2.toString());
-            
-            
+             */
+
             pop.addIndividuo(mut1);
             pop.addIndividuo(mut2);
         }
@@ -171,10 +192,9 @@ public class Selecao {
             int muta = (int) (Math.random() * 100);
             //System.out.println("taxa "+ muta +" >" + taxaMutacao);
             if (muta < taxaMutacao) {
-                
+
                 novo.setGene(x, (int) (Math.random() * 8 + 1));
-            }
-            else {
+            } else {
                 novo.setGene(x, cromo.getGene(x));
             }
 
@@ -186,8 +206,54 @@ public class Selecao {
     public void printPopulacao() {
         int count = 0;
         for (Map.Entry<Cromossomo, Integer> entry : cromo.entrySet()) {
-            System.out.println("g" + geracao + " i" + count + " : " + entry.getKey().toString() + " Fitness: " + entry.getValue());
+            ArquivoSaida arq;
+            try {
+                arq = ArquivoSaida.init();
+                arq.println("g" + geracao + " i" + count + " : " + entry.getKey().toString() + " Fitness: " + entry.getValue());
+            } catch (IOException ex) {
+                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            // System.out.println("g" + geracao + " i" + count + " : " + entry.getKey().toString() + " Fitness: " + entry.getValue());
             count++;
         }
+    }
+
+    public Populacao selecionaTorneio() {
+        ArrayList<Cromossomo> parentes = new ArrayList<>();
+        SortedMap<Integer, Integer> map = organizarPopulacao();
+        int tamTorneio = fitness.size() / 10;
+
+        if (tamTorneio < 2) {
+            tamTorneio = 2;
+        }
+
+        for (int i = 0; i < fitness.size(); i++) {
+            Integer keyselected = (int) (Math.random() * fitness.size());
+
+            for (int x = 1; x < tamTorneio; x++) {
+                Integer sorteio = (int) (Math.random() * fitness.size());
+                
+               
+                if (fitness.get(sorteio) > fitness.get(keyselected)) {
+                    keyselected = sorteio;
+                }
+            }
+
+            //System.out.println(keyselected);
+            Cromossomo novoCromo;
+            try {
+                novoCromo = new Cromossomo(this.cromossomos.get(keyselected).getCromossomo());
+                parentes.add(novoCromo);
+            } catch (Exception ex) {
+                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        if (metCruzamento == 0) {
+            return cruzamentoUniforme(parentes);
+        }
+        return cruzamentoUniforme(parentes);
     }
 }

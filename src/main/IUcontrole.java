@@ -222,7 +222,7 @@ public class IUcontrole extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 331, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -250,6 +250,8 @@ public class IUcontrole extends javax.swing.JFrame {
         int taxa = (int) spTaxaMutacao.getValue();
         int tamanho = (int) spPopulacao.getValue();
         int cParada = cbCriterioParada.getSelectedIndex();
+        int metSelecao = cbSelecao.getSelectedIndex();
+        int metCruzamento = cbCruzamento.getSelectedIndex();
         if(cbCriterioParada.getSelectedIndex() == 1){
             cParada = (int) spGeracao.getValue();
         }
@@ -257,7 +259,7 @@ public class IUcontrole extends javax.swing.JFrame {
         
         
         //System.out.println(taxa + " " + spPopulacao.getValue() + " " + cParada);
-        Controle control = new Controle(tamanho, taxa, cParada);
+        Controle control = new Controle(tamanho, taxa, cParada, metSelecao, metCruzamento);
         control.iniciar();
     }//GEN-LAST:event_jButton1ActionPerformed
 

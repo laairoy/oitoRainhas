@@ -5,6 +5,10 @@
  */
 package main;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author laairoy
@@ -14,24 +18,27 @@ public class Controle {
     private final int tamPopulacao;
     private final int taxaMuta;
     private final int critPara;
+    private final int metSelecao;
+    private final int metCruzamento;
     private final int tamCromossomo;
     private Populacao populacao;
 
-    public Controle(int tamPopulacao, int taxaMuta, int critPara) {
+    public Controle(int tamPopulacao, int taxaMuta, int critPara, int metSelecao, int metCruzamento) {
         this.tamPopulacao = tamPopulacao;
         this.taxaMuta = taxaMuta;
         this.critPara = critPara;
+        this.metSelecao = metSelecao;
         this.tamCromossomo = 8;
+        this.metCruzamento = metCruzamento;
         populacao = new Populacao(tamPopulacao);
 
         initPopulacao();
     }
-    
-    public void iniciar(){
-        if(critPara == 0){
+
+    public void iniciar() {
+        if (critPara == 0) {
             selecaoEncontrar();
-        }
-        else {
+        } else {
             selecaoGeracao();
         }
     }
@@ -66,12 +73,28 @@ public class Controle {
     }
 
     private boolean selecao(int geracao) {
-        Selecao selecao = new Selecao(populacao.tamanho(), taxaMuta, geracao);
+        Selecao selecao = new Selecao(populacao.tamanho(), taxaMuta, geracao, metCruzamento);
         boolean resultado = selecao.setFitness(populacao);
         selecao.printPopulacao();
         //System.out.println();
-        populacao = selecao.selecionaRoleta();
-        System.out.println();
+
+        try {
+            ArquivoSaida arq = ArquivoSaida.init();
+            arq.println("");
+
+            if (resultado == true) {
+                arq.close();
+                return resultado;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (metSelecao == 0) {
+            populacao = selecao.selecionaRoleta();
+        } else {
+            populacao = selecao.selecionaTorneio();
+        }
+        //System.out.println();
         return resultado;
     }
 
@@ -82,14 +105,17 @@ public class Controle {
             achou = selecao(i);
             i++;
         }
+        System.out.println("fim!");
     }
 
     private void selecaoGeracao() {
         for (int i = 0; i < critPara; i++) {
-            if(selecao(i)) {
+            if (selecao(i)) {
+                System.out.println("fim!");
                 return;
             }
         }
+        System.out.println("fim!");
     }
 
 }

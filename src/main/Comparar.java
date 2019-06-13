@@ -16,7 +16,7 @@ public class Comparar implements Comparator<Object> {
 
     Map<?, Integer> map;
 
-    public Comparar(Map<?, Integer> map) {
+    public Comparar(Map<Integer, Integer> map) {
         this.map = map;
     }
 
