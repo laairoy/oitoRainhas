@@ -25,34 +25,42 @@ public class Selecao {
     private final ArrayList<Cromossomo> cromossomos;
     private final Map<Cromossomo, Integer> cromo;
     private int tamPopulacao;
-    private double taxaMutacao;
+    private int taxaMutacao;
+    int geracao;
 
     private int somaFitness;
 
-    public Selecao(int tamPopulacao, double taxaMutacao) {
+    public Selecao(int tamPopulacao, int taxaMutacao, int geracao) {
         this.fitness = new ArrayList<>();
         this.cromossomos = new ArrayList<>();
         this.somaFitness = 0;
         this.cromo = new HashMap<>();
         this.tamPopulacao = tamPopulacao;
         this.taxaMutacao = taxaMutacao;
+        this.geracao = geracao;
     }
 
-    public int setFitness(Cromossomo cromo) {
+    public boolean setFitness(Populacao populacao) {
+        boolean bool = false;
+        for (int x = 0; x < populacao.tamanho(); x++) {
+            //int valor = selecao.setFitness(populacao.getIndividuo(x));
+            Cromossomo cromossomo = populacao.getIndividuo(x);
 
-        int colisao = getColisao(cromo);
+            int colisao = getColisao(cromossomo);
 
-        cromossomos.add(cromo);
-        fitness.add(colisao);
-        somaFitness += colisao;
-        this.cromo.put(cromo, 56 - colisao);
+            cromossomos.add(cromossomo);
+            fitness.add(56 - colisao);
+            somaFitness += colisao;
+            this.cromo.put(cromossomo, 56 - colisao);
 
-        //System.out.println(cromo.toString() + " " + (49 - colisao));
-        if((56- colisao) == 56) {
-            System.out.println("-> "+cromo.toString());
+            //System.out.println(cromo.toString() + " " + (49 - colisao));
+            if ((56 - colisao) == 56) {
+                System.out.println("-> " + cromossomo.toString());
+                bool = true;
+            }
+            //return 56 - colisao;
         }
-        return 56 - colisao;
-
+        return bool;
     }
 
     private int getColisao(Cromossomo cromo) {
@@ -89,7 +97,9 @@ public class Selecao {
         SortedMap<Integer, Integer> map = new TreeMap<Integer, Integer>(comp);
 
         map.putAll(hmap);
-        //System.out.println(map);
+
+        System.out.println("Melhor: " + this.cromossomos.get(map.firstKey()).toString() + " " + map.values().iterator().next());
+        //System.out.println();
 
         //int index =0;
         for (int i = 0; i < fitness.size(); i++) {
@@ -128,8 +138,8 @@ public class Selecao {
             Cromossomo mae = cromo.get(x);
 
             for (int i = 0; i < 8; i++) {
-                int rand = (int) (Math.random() * 1);
-                if (rand == 1) {
+                int rand = (int) (Math.random() * 10);
+                if (rand < 5) {
                     filho1.setGene(i, pai.getAlelo(i));
                     filho2.setGene(i, mae.getAlelo(i));
                 } else {
@@ -138,8 +148,17 @@ public class Selecao {
                 }
 
             }
-            pop.addIndividuo(mutacao(filho1));
-            pop.addIndividuo(mutacao(filho2));
+            Cromossomo mut1 = mutacao(filho1);
+            Cromossomo mut2 = mutacao(filho2);
+            
+            System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                    + " => F1: " + filho1.toString() + ", M: " + mut1.toString());
+            System.out.println("Cruzamento: " + " Pais " + pai.toString() + "+" + mae.toString()
+                    + " => F2: " + filho2.toString() + ", M: " + mut2.toString());
+            
+            
+            pop.addIndividuo(mut1);
+            pop.addIndividuo(mut2);
         }
 
         return pop;
@@ -147,16 +166,28 @@ public class Selecao {
     }
 
     private Cromossomo mutacao(Cromossomo cromo) {
-
+        Cromossomo novo = new Cromossomo();
         for (int x = 0; x < cromo.tamanho(); x++) {
-            double muta = Math.random() * 1;
-
+            int muta = (int) (Math.random() * 100);
+            //System.out.println("taxa "+ muta +" >" + taxaMutacao);
             if (muta < taxaMutacao) {
-                cromo.setGene(x, (int) (Math.random() * 8 + 1));
+                
+                novo.setGene(x, (int) (Math.random() * 8 + 1));
             }
+            else {
+                novo.setGene(x, cromo.getGene(x));
+            }
+
         }
 
-        return cromo;
+        return novo;
     }
 
+    public void printPopulacao() {
+        int count = 0;
+        for (Map.Entry<Cromossomo, Integer> entry : cromo.entrySet()) {
+            System.out.println("g" + geracao + " i" + count + " : " + entry.getKey().toString() + " Fitness: " + entry.getValue());
+            count++;
+        }
+    }
 }

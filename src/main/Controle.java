@@ -12,14 +12,14 @@ package main;
 public class Controle {
 
     private final int tamPopulacao;
-    private final double taxaMuta;
+    private final int taxaMuta;
     private final int critPara;
     private final int tamCromossomo;
     private Populacao populacao;
 
-    public Controle(int tamPopulacao, double taxaMuta, int critPara) {
+    public Controle(int tamPopulacao, int taxaMuta, int critPara) {
         this.tamPopulacao = tamPopulacao;
-        this.taxaMuta = tamPopulacao;
+        this.taxaMuta = taxaMuta;
         this.critPara = critPara;
         this.tamCromossomo = 8;
         populacao = new Populacao(tamPopulacao);
@@ -65,29 +65,28 @@ public class Controle {
         }
     }
 
-    private boolean selecao() {
-        Selecao selecao = new Selecao(populacao.tamanho(), 0.05);
-        for (int x = 0; x < populacao.tamanho(); x++) {
-            int valor = selecao.setFitness(populacao.getIndividuo(x));
-            if (valor == 56) {
-                System.out.println("achou");
-                return true;
-            }
-        }
+    private boolean selecao(int geracao) {
+        Selecao selecao = new Selecao(populacao.tamanho(), taxaMuta, geracao);
+        boolean resultado = selecao.setFitness(populacao);
+        selecao.printPopulacao();
+        //System.out.println();
         populacao = selecao.selecionaRoleta();
-        return false;
+        System.out.println();
+        return resultado;
     }
 
     private void selecaoEncontrar() {
         boolean achou = false;
+        int i = 0;
         while (achou == false) {
-            achou = selecao();
+            achou = selecao(i);
+            i++;
         }
     }
 
     private void selecaoGeracao() {
         for (int i = 0; i < critPara; i++) {
-            if(selecao()) {
+            if(selecao(i)) {
                 return;
             }
         }

@@ -247,7 +247,7 @@ public class IUcontrole extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        double taxa = (double) ((int)spTaxaMutacao.getValue()) / 100;
+        int taxa = (int) spTaxaMutacao.getValue();
         int tamanho = (int) spPopulacao.getValue();
         int cParada = cbCriterioParada.getSelectedIndex();
         if(cbCriterioParada.getSelectedIndex() == 1){
