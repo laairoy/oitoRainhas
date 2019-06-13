@@ -107,7 +107,7 @@ public class Controle {
             achou = selecao(i);
             i++;
         }
-        System.out.println("fim!");
+       // System.out.println("fim!");
     }
 
     private void selecaoGeracao() {
@@ -115,7 +115,7 @@ public class Controle {
         for (int i = 0; i < critPara; i++) {
             boolean res = selecao(i);
             if (res == true) {
-                System.out.println("fim!");
+              //  System.out.println("fim!");
                 return;
             }
         }
@@ -126,7 +126,7 @@ public class Controle {
         } catch (IOException ex) {
             Logger.getLogger(Controle.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("fim!");
+        //System.out.println("fim!");
     }
 
 }

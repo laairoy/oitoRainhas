@@ -59,9 +59,8 @@ public class Selecao {
 
             //System.out.println(cromo.toString() + " " + (49 - colisao));
             if ((56 - colisao) == 56) {
-                melhor = "Melhor: " + cromossomo.toString() + " Fitness: " + 56;
-                System.out.println(melhor);
-
+                //melhor = "Melhor: " + cromossomo.toString() + " Fitness: " + 56;
+                //System.out.println(melhor);
                 bool = true;
             }
             //return 56 - colisao;
