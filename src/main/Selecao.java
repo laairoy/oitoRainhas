@@ -14,7 +14,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  *
@@ -46,6 +45,7 @@ public class Selecao {
     public boolean setFitness(Populacao populacao) {
         boolean bool = false;
         String melhor = null;
+        
         for (int x = 0; x < populacao.tamanho(); x++) {
             //int valor = selecao.setFitness(populacao.getIndividuo(x));
             Cromossomo cromossomo = populacao.getIndividuo(x);
@@ -59,22 +59,23 @@ public class Selecao {
 
             //System.out.println(cromo.toString() + " " + (49 - colisao));
             if ((56 - colisao) == 56) {
-                //melhor = "Melhor: " + cromossomo.toString() + " Fitness: " + 56;
-                //System.out.println(melhor);
+                melhor = "Melhor: " + cromossomo.toString() + " Fitness: " + 56;
+                System.out.println(melhor);
+
+                try {
+                    ArquivoSaida arq;
+                    arq = ArquivoSaida.init();
+                    arq.println(melhor);
+
+                } catch (IOException ex) {
+                    Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 bool = true;
             }
             //return 56 - colisao;
         }
-        if (melhor != null) {
-            ArquivoSaida arq;
-            try {
-                arq = ArquivoSaida.init();
-                arq.println(melhor);
-            } catch (IOException ex) {
-                Logger.getLogger(Selecao.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
-        }
         return bool;
     }
 
@@ -109,7 +110,7 @@ public class Selecao {
             int keyselected = 0;
             for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
                 Double valor;
-                valor = 360 * ((double) (entry.getValue()) / 62);
+                valor = 360 * ((double) (entry.getValue()) / somaFitness);
                 //System.out.println(randValor + "-> " + (valor));
                 if (randValor > valor) {
                     keyselected = entry.getKey();
@@ -222,8 +223,9 @@ public class Selecao {
 
         for (int x = 1; x < tamPopulacao; x = x + 2) {
 
-            Cromossomo pai = cromo.get(x - 1);
-            Cromossomo mae = cromo.get(x);
+            Cromossomo pai = cromo.get((int) (Math.random() * cromo.size()));
+            Cromossomo mae = cromo.get((int) (Math.random() * cromo.size()));
+            
             ArrayList<Cromossomo> temp;
 
             if (metCruzamento == 0) {
@@ -259,10 +261,11 @@ public class Selecao {
         ArrayList<Cromossomo> list = new ArrayList<>();
         Cromossomo filho1 = new Cromossomo();
         Cromossomo filho2 = new Cromossomo();
-
+        int pontoCorte = (int) (Math.random() * 8);
+        
         for (int i = 0; i < 8; i++) {
             //int rand = (int) (Math.random() * 10);
-            if (i < 4) {
+            if (i < pontoCorte) {
                 filho1.setGene(i, pai.getAlelo(i));
                 filho2.setGene(i, mae.getAlelo(i));
             } else {

@@ -44,9 +44,9 @@ public class ArquivoSaida {
         Charset utf8 = StandardCharsets.UTF_8;
         try {
             Files.write(Paths.get(path), list, utf8);
-            for(String str : list){
-                System.out.println(str);
-            }
+//            for(String str : list){
+//                System.out.println(str);
+//            }
         } catch (IOException e) {
         }
 
